@@ -1,1 +1,1 @@
-# Statistical-Genetics
+This is repository for the statistical genetics related work I've done.
