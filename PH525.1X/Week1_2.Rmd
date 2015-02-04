@@ -87,4 +87,48 @@ Question 3.1: What is the one-tailed probability of seeing as big a difference a
 
 Question 3.2: What is the two-tailed probability of seeing as big a difference as we observed, calculated from your null distribution? (`r mean(null > diff) + mean(null < -diff)`)
 
+<a name="distributions"></a>
 
+## Distributions
+A *distribution* is as a compact description of many numbers. For example, in the previous section we defined an object 'null' with 10,000 average differences created under the null. To define a distribution we compute, for all possible values of $a$ the proportion of numbers in our list that are below $a$. We use the following notation
+ 
+ $$ F(a) \equiv \mbox{Pr}(x \leq a) $$
+ 
+This is called the empirical cumulative distribution function. We can plot $F(a)$ versus $a$ like this
+```{r, echo=TRUE, cache=TRUE}
+values <- seq(min(null), max(null), len = 300)
+myecdf <- ecdf(null)
+plot(values, myecdf(values), type = "l")
+```
+
+Histograms give us the same information but show us the proportion of values in intervals:   
+
+$$\mbox{Pr}(a \leq x \leq b) = F(b)-F(a)$$
+
+This is a more useful plot because we are usually more interested in intervals. It is also easier to distinguish different types (families) of distributions by looking at histograms.
+
+Note that from the histogram we can see that values as large as `diff` are relatively rare
+```{r, echo=TRUE, cache=TRUE}
+hist(null)
+abline(v = diff)
+```
+
+<a name="normal_distribution"></a>
+
+## Normal distribution
+When the histogram of a list of numbers approximates the normal distribution we can use a convenient mathematical formula to approximate the proportion of individuals in any given interval
+
+$$
+\mbox{Pr}(a < x < b) = \int_a^b \frac{1}{\sqrt{2\pi\sigma^2}} \exp{\left( \frac{-(x-\mu)^2}{2 \sigma^2} \right)} \, dx
+$$
+
+Here $\mu$ and $\sigma$ are refereed to as the mean and standard deviation.If this approximation holds for our list then the population mean and variance of our list can be used in the formula above. To see this with an example remember that above we noted that only 1.5% of values on the null distribution were above `diff`. We can compute the proportion of values below a value `x` with `pnorm(x,mu,sigma)` without knowing all the values. The normal approximation works very well here:
+
+```{r}
+1-pnorm(diff,mean(null),sd(null)) 
+```
+
+A very useful characteristic of this approximation is that one only needs to know $\mu$ and $\sigma$ to describe the entire distribution. From this we can compute the proportion of values in any interval. 
+
+##Summary
+Note that to make this calculation we did the equivalent of buying all the mice available from Jackson laboratories and performed our experiment over and over again to define the null distribution. This is not something we can do in practice. Statistical Inference is the mathematical theory that permits you to approximate this with only the data from your sample, i.e. the original 24 mice. 
