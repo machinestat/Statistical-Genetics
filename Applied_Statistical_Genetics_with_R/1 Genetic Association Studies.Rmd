@@ -1,0 +1,22 @@
+---
+title: "1 Genetic Association Studies"
+author: "Shu Guo"
+date: "Thursday, February 05, 2015"
+output: pdf_document
+---
+
+Population-based genetic association studies. These studies generally aim
+to relate genetic sequence information derived from unrelated individuals to a measure of disease progression or disease status. 
+
+# 1.1 Overview of population-based investigations
+Population-based genetic association studies can be divided roughly into four categories of studies: candidate polymorphism, candidate gene, fine mapping and whole or partial genome-wide scans.
+
+## 1.1.1 Types of investigations  
+_Candidate polymorphism studies_   
+
+Investigations of genotype-trait associations for which there is an a priori hypothesis about functionality are called candidate polymorphism studies. Technically, a variation must be present in at least 1% of a population to be classified as a polymorphism. Such a variable site is
+commonly referred to as a single-nucleotide polymorphism (SNP).
+
+_Candidate gene studies_
+
+Candidate gene studies generally involve multiple SNPs within a single gene. The underlying premise of these studies is that the SNPs under investigation capture information about the underlying genetic variability of the gene under consideration, though the SNPs may not serve as the true disease-causing variants.
