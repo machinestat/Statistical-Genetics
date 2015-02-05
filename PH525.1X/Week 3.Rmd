@@ -1,6 +1,6 @@
 ---
 title: "Week 3"
-author: "Shu"
+author: "Shu Guo"
 date: "Thursday, February 05, 2015"
 output: pdf_document
 ---
@@ -47,3 +47,14 @@ the sample. This is the essence of statistical inference.
 ## Sample estimates
 
 In the previous section, we obtained samples of 12 mice from each population. We represent these with capital letters to indicate that they are random. This is common practice in statistics, although it is not always followed. So the samples are $X_1,\dots,X_M$ and $Y_1,\dots,Y_N$ and in this case $N=M=12$. Since we want to know what $\mu_Y - \mu_X$ is we consider the sample version: $\bar{Y}-\bar{X}$  with 
+
+$$\bar{X}=\frac{1}{M} \sum_{i=1}^M X_i \mbox{ and }\bar{Y}=\frac{1}{N} \sum_{i=1}^N Y_i$$
+
+Here we described the mathematical theory that mathematically relates $\bar{X}$ to $\mu_X$ and $\bar{Y}$ to $\mu_Y$, which will in turn help us understand the relationship between $\bar{Y}-\bar{X}$  and $\mu_Y - \mu_X$.
+
+# Central Limit Theorem in practice
+
+```{r,results=FALSE,echo=FALSE}
+set.seed(1) ##so that we get same results
+```
+
