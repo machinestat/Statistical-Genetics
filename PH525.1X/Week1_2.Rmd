@@ -1,5 +1,5 @@
 ---
-title: "PH525.1x: Week1"
+title: "PH525.1x: Week1 & Week2"
 author: "Shu Guo"
 date: "Sunday, February 01, 2015"
 output: pdf_document
@@ -132,3 +132,86 @@ A very useful characteristic of this approximation is that one only needs to kno
 
 ##Summary
 Note that to make this calculation we did the equivalent of buying all the mice available from Jackson laboratories and performed our experiment over and over again to define the null distribution. This is not something we can do in practice. Statistical Inference is the mathematical theory that permits you to approximate this with only the data from your sample, i.e. the original 24 mice. 
+
+## Questions
+
+Question 1.2:
+We will use the data set called "Gapminder" which is available as an R-package on Github. This data set contains the life expectancy, GDP per capita, and population by country, every five years, from 1952 to 2007. It is an excerpt of a larger and more comprehensive set of data available on Gapminder.org, and the R package of this dataset was created by the statistics professor Jennifer Bryan.
+```{r,echo=TRUE,eval=FALSE}
+# First, install the gapminder data set using the devtools R-package.
+library(devtools)
+install_github("jennybc/gapminder")
+```
+Next, load the gapminder data set. 
+```{r, echo=TRUE, cache=TRUE}
+library(gapminder)
+data(gapminder)
+head(gapminder)
+# What is the proportion of countries in 1952 that have a life expectancy less than or equal to 40?
+mean(gapminder[gapminder$year == 1952, ]$lifeExp <= 40)
+```
+
+Question 1.2:
+What is the proportion of countries in 1952 that have a life expectancy between 40 and 60 years? This is the proportion that have a life expectancy less than or equal to 60 years, minus the proportion that have a life expectancy less than or equal to 40 years.
+`r mean(gapminder[gapminder$year == 1952, ]$lifeExp <= 60) - mean(gapminder[gapminder$year == 1952, ]$lifeExp <= 40)`
+
+Question 2.1:
+Create a vector which gives the population sizes of the countries in 1952. Examine the histogram of these population sizes. Now examine the histogram of the log10 of these population sizes. What is the standard deviation of the log10 of population size of the countries in 1952?
+```{r}
+pop52 <- gapminder$pop[gapminder$year == 1952]
+par(mfrow = c(1, 2))
+hist(pop52, breaks = 16)
+hist(log10(pop52), breaks = 16)
+par(mfrow = c(1, 1))
+# The standard deviation of the log10 of population size of the countries in 1952
+sd(log10(pop52))
+```
+
+Question 2.2:
+```{r}
+# Create a vector 'x' of the log10 of the 1952 population sizes
+x <- log10(pop52)
+qqnorm(x);qqline(x)
+# Standardize the log10 population size vector
+z <- scale(x, center = TRUE, scale = TRUE)
+qqnorm(z);qqline(z);abline(0, 1)
+# What is the z-score of the country with the largest population size?
+tail(sort(z), 1)
+```
+
+Question 2.3:
+Now we will use a Normal distribution approximation of the real distribution to ask questions about the expected proportions.
+
+We will use the vector 'x' of the log10 of the 1952 population sizes for each country. We are going to create a function which gives back the Normal distribution cumulative density function for a Normal with the same mean and standard deviation as the vector x. This is accomplished by writing a one line function which uses pnorm(). pnorm() takes a value 'q', and returns the proportion of a Normal distribution which is less than or equal to 'q', for a Normal with a given mean and standard deviation.
+
+```{r}
+F = function(q) pnorm(q, mean=mean(x), sd=sd(x))
+```
+Using the Normal approximation, estimate the number of countries that should have a log10 1952 population between 6 and 7 (i.e., between 1 million and 10 million people)?
+```{r}
+length(x)*(F(7) - F(6))
+```
+Question 2.4
+Recreate a QQ plot from scratch. The plot we want to create is:
+```{r}
+qqnorm(x)
+```
+...which shows the quantiles of a standard normal distribution(mean 0, standard deviation 1) on the x-axis, and the sample quantiles on the y-axis. If the points falls alone a line , then the sample is approximately normal distributed. We can build this plot using the quantiles of a standard normal, and the same quantiles of our sample. First we need to find the number of observations in our sample:
+```{r}
+n = length(x)
+```
+
+The sorted values of x represent n quantiles of the sample distribution spread from 0.0 to 1.0, however the quantiles do not include 0 and 1. Therefore, the sorted values of x are considered the 0.5/n, 1.5/n, 2.5/n, ..., (n-0.5)/n quantitles of the sample distribution. Or in code, we want to find the quantiles of the standard normal distribution which are associated with the following probabilities:
+```{r}
+ps = ((1:n)-0.5)/n
+```
+The matching quantiles of the standard normal distribution can be found by plugging in ps into qnorm()
+
+What is the quantile of the standard normal distribution which matches to the smallest number in x(the first element of sort(x))
+```{r}
+qnorm(0.5/n)
+```
+We can then construct our plot, as we have the quantiles of the sample distribution, and can plug 'ps' into qnorm to get the matching sample quantiles of a normal distribution:
+```{r}
+plot(qnorm(ps), sort(x))
+```
