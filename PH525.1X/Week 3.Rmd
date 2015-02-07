@@ -122,5 +122,27 @@ for(i in seq(along=Ns)){
 }
 ```
 
+Here we see a pretty good fit even for 3. Why is this? Because the population itself is relatively close to normally distributed, the averages are close to normal as well, (the sum of normals is normals). Now in practice we actually calculate a ratio, we divide by the estimate standard deviation. Here is where the sample size starts to matter more.
+
+```{r}
+Ns <- c(3,12,25,50)
+B <- 10000 #number of simulations
+##function to compute a t-stat
+computetstat <- function(n){
+  y <-sample(hfPopulation,n)
+  x <-sample(controlPopulation,n)
+  (mean(y)-mean(x))/sqrt(var(y)/n+var(x)/n)
+}
+res <-  sapply(Ns,function(n){
+  replicate(B,computetstat(n))
+})
+mypar2(2,2)
+for(i in seq(along=Ns)){
+  qqnorm(res[,i],main=Ns[i])
+  qqline(res[,i],col=2)
+}
+```
+
+Now we see that for $N=3$ the CLT does not provide a usable approximation. For $N=12$ their is a slight deviation at the higher values, although the approximation appears useful. For 25 and 50 the appoximation is spot on. Note that this simulation is not meant as proof that $N=12$ is large enough, in general. It only applies to this dataset and, as mentioned above, we will not be able to perform this simulation in most situation. 
 
 
