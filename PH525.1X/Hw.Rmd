@@ -1,0 +1,21 @@
+---
+title: "Homework"
+author: "Shu Guo"
+date: "Sunday, February 08, 2015"
+output: pdf_document
+---
+
+Load the babies dataset:
+
+```{r, echo=TRUE,cache=TRUE}
+babies <- read.table("babies.txt", header = TRUE)
+```
+
+This is a very large dataset(1,236 cases), and we will pretend that it contains the entire population that we are interested in. As before, we will study the differences in birthweight between babies born to smoking and non-smoking mothers.
+
+Fist, we split the into two birthweight datasets, one of birthweights to non-smoking mothers, and the other of birthweights to smoking mothers.
+
+```{r}
+bwt.nosmoke <- babies$bwt[babies$somke == 0]
+bwt.smoke <- babies$bwt[babies$smoke == 1]
+```
