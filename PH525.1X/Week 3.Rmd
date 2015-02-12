@@ -2,7 +2,7 @@
 title: "Week 3"
 author: "Shu Guo"
 date: "Thursday, February 05, 2015"
-output: pdf_document
+output: html_document
 ---
 # Population, Samples, and Estimates
 
@@ -112,8 +112,8 @@ res <-  sapply(Ns,function(n){
 Now we can use qq-plots to see how well CLT approximations  works for these. If in fact the normal distribution is a good approximation the points should fall on a straight line when compared to normal quantiles. The more it deviates, the worse the approximation.  We also show, in the title, the average and SD of the observed distribution showing how the SD decreases with $\sqrt{N}$ as predicted. 
 
 ```{r}
-library(rafalib)
-mypar2(2,2)
+#library(rafalib)
+#par = mfrow(c = (2, 2))
 for(i in seq(along=Ns)){
   title <- paste("N=",Ns[i],"Avg=",signif(mean(res[,i]),3),"SD=",
         signif(popsd(res[,i]),3)) ##popsd defined above
@@ -144,5 +144,15 @@ for(i in seq(along=Ns)){
 ```
 
 Now we see that for $N=3$ the CLT does not provide a usable approximation. For $N=12$ their is a slight deviation at the higher values, although the approximation appears useful. 
+
+#Confidence Intervals
+
+# Introduction
+
+We do not recommend reporting p-values as the only statistical summary of your results. The reason is simple: statistical significance does not guarantee scientific significance.With large enough sample sizes, one might detect a statistically significance difference in weight of, say, 1 microgram. But is this an important finding? Would we say a diet results in higher weight if the increase is less than a fraction of a percent? The problem with reporting only p-values is that you will not provide a very important piece of information: the effect sizes.
+
+An much more attractive alternative is to report confidence intervals. A confidence interval includes relays information about your estimated effect size and the uncertainty associated with this estimate. Here we use the mice data to illustrate the concept behind confidence intervals.
+
+## Confidence interval for population mean
 
 

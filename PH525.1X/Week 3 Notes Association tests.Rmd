@@ -1,6 +1,6 @@
 ---
 title: "Week 3 Notes Association tests"
-output: html_document
+output: word_document
 layout: page
 ---
 
