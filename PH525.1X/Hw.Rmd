@@ -144,7 +144,7 @@ What is the average length of the confidence interval?
 d = read.csv("assoctest.csv")
 ```
 
- Question 1.2
+Question 1.2
 
 The population-level difference was
 
@@ -275,4 +275,74 @@ Compute the Fisher's exact test ( fisher.test() ) for the same table. What is th
 
 ```{r}
 fisher.test(t)
+```
+
+### Using Monte Carlo to examine the sample variance
+
+In the video, Rafa showed how to examine the null distribution of the t-statistic using Monte Carlo simulations: by randomly drawing 2 sets of n samples from the non-smokers group and then calculating the t-statistic. We could then see that this distribution was approximately normal when n was large, but not when n was small (n=3).
+
+In this assessment, we will use the same technique to examine the sample variance. A quick reminder: on the sample variance, if we have a sample 'x' with length 'n', the sample variance is defined:
+
+$1/(n-1) * sum( ( x - mean(x) )^2 )$
+
+In R, we can simply write
+
+var(x)
+
+The sample variance will not typically be equal to the population (in other words, it will have some error), and the sample variance depends on the sample, which is random, so the sample variance is a random variable. Here we will examine how the sample variance is likely to be closer to the true variance as the size of the sample increases. Let's start by loading the "babies" data that was used in the previous video. The data can be downloaded from here.
+
+babies = read.table("babies.txt", header=TRUE)
+
+The population of nonsmoker baby weights is:
+
+bwt.nonsmoke = babies$bwt[babies$smoke==0]
+
+And the population variance is 302.7144:
+
+pop.var = var(bwt.nonsmoke)
+
+Question 1.1
+
+Use replicate() to perform Monte Carlo simulations. So the following line of example code will repeat the R expression, "xyz" 1000 times (you need to fill in your R code in place of "xyz"):
+
+vars = replicate(1000, xyz)
+
+Using Monte Carlo simulation, take 1000 samples of size 10 from bwt.nonsmoke and calculate the variance. Look at a histogram of vars, and add the population variance as a vertical line.
+
+How often (what proportion of simulations) is the sample variance greater than 1.5 times the population variance? Use 1000 simulations. Your answer will change, but we have used a range of permissible answers. For the population variance, just use pop.var above.
+
+```{r}
+babies = read.table("babies.txt", header=TRUE)
+bwt.nonsmoke = babies$bwt[babies$smoke==0]
+pop.var = var(bwt.nonsmoke)
+
+vargenerator <- function(n){
+    nonsmokers <- sample(bwt.nonsmoke, n)
+    return(var(nonsmokers))
+}
+
+RandVars <- replicate(1000, vargenerator(10))
+length(which(RandVars >  pop.var*1.5))/1000
+
+## change the sample size to 50
+RandVars <- replicate(1000, vargenerator(50))
+length(which(RandVars >  pop.var*1.5))/1000
+```
+
+plot of Sample variance and population variance
+
+Finally, we'll make a plot to see how the sample variance estimates gets better (closer to the population variance) as the sample size increases. 
+```{r}
+## First, we'll make a vector of sample sizes from 2 to 400:
+
+sample.size = 2:400
+
+## Now, for each sample size, take a sample from the nonsmokers of that size, and calculate the variance:
+
+var.estimate = sapply(sample.size, function(n) var(sample(bwt.nonsmoke, n)))
+
+#Finally, plot these sample variances over their sample sizes, and draw a horizontal line of the population variance:
+
+plot(sample.size, var.estimate)
+abline(h=pop.var, col="blue")
 ```
