@@ -346,3 +346,52 @@ var.estimate = sapply(sample.size, function(n) var(sample(bwt.nonsmoke, n)))
 plot(sample.size, var.estimate)
 abline(h=pop.var, col="blue")
 ```
+
+### Permutation Tests
+In the video you just watched, Rafa provided some reasoning for why you might use a permutation test:
+
+    "Sometimes the summary statistics we form are not as simple as just taking the average or the difference in averages, and ... the null distribution is not something we can easily compute, so permutation tests give us an alternative way of doing this, of computing the null distribution."
+
+In the video, we computed the null distribution of the difference between the mean of the baby weights for smokers and non-smokers, using a permutation strategy. Let's take 50 samples from each of the two groups, and suppose that we want to use a permutation test to compare these:
+
+```{r}
+set.seed(0)
+N <- 50
+smokers <- sample(babies$bwt[babies$smoke==1], N)
+nonsmokers <- sample(babies$bwt[babies$smoke==0], N)
+
+##calculated the observed difference in means:
+obs <- mean(smokers) - mean(nonsmokers)
+```
+Finally, we used 1000 replicated permutations to generate a null distribution. We joined the two groups, shuffled the samples, and took the first 50 in one group, and the second 50 in a second group:
+
+```{r}
+avgdiff <- replicate(1000, {
+    all <- sample(c(smokers,nonsmokers))
+    smokersstar <- all[1:N]
+    nonsmokersstar <- all[(N+1):(2*N)]
+    return(mean(smokersstar) - mean(nonsmokersstar))
+})
+```
+Finally, we calculated a probability of seeing such a large difference between means under the null hypothesis. We use the absolute value, because we are interested if the difference was large in the positive or negative direction.
+
+`r mean(abs(avgdiff) > abs(obs))`
+Question 2.1
+
+However, the difference in means (if we assume the data is normal) has some nice asymptotic results which allow us to use the t-distribution to calculate the probability of seeing so large a difference.
+
+Suppose we are really interested in the medians of the groups, not the means. And suppose we want to know if the difference in medians is more than expected if the two groups are actually sampled from the same population (that is, under the null hypothesis). Here is a case where the permutation test can easily be modified to give us an answer.
+
+Use a permutation test with 1000 replications to generate a p-value for the observed difference in medians. What is the p-value for the two groups of 50 defined above?
+
+```{r}
+obsMedian <- median(smokers)-median(nonsmokers)
+mediandiff <- replicate(1000, {
+    all <- sample(c(smokers,nonsmokers))
+    smokersstar <- all[1:N]
+    nonsmokersstar <- all[(N+1):(2*N)]
+    return(median(smokersstar) - median(nonsmokersstar))
+})
+
+mean(abs(mediandiff) > abs(obsMedian))
+```
