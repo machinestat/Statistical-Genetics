@@ -67,7 +67,7 @@ source("http://www.bioconductor.org/biocLite.R")
 biocLite("genefilter")
 ```
 
-## Excersi
+## Exercise
 **Question 1.2.1**
 
 p-values are random variables.
@@ -144,3 +144,93 @@ Note that what the answer to question 1.2.4 says is that on average, we expect s
 
 Using the same simulation data from question 1.2.4, for what proportion of the 1,000 replications do we reject the null hypothesis at least once (more than 0 false positives)? (Enter your response as a decimal value -- i.e. .10 for 10%.)
 `r sum(pvals5> 0)/1000`
+
+## Installing Bioconductor
+
+Bioconductor is similar to CRAN but uses a different set of functions for downloads. It also includes many more data packages as well as annotation packages that store information about either high-throughout products or information about molecular endpoints such as genes.
+
+## Data organized in three tables
+One of the great advantages of using Bioconductor for high throughput data is that it provides object classes specifically designed to keep high throughput data organized. Below is an example of how the three tables that are needed to conduct data analysis are available from Bioconductor data objects. For example for gene expression we can use the ExpressionSet object.
+
+```{r}
+##install the Biobase package
+source("http://bioconductor.org/biocLite.R")
+biocLite("Biobase")
+library(Biobase)
+devtools::install_github("genomicsclass/GSE5859")
+library(GSE5859)
+data(GSE5859)
+class(e)
+
+##These objects were originally designed for gene expression data so the
+##methods to extract the high throughput measurements have related names:
+dat <- exprs(e)
+dim(dat)
+
+##The information about samples is also stored in this object and the
+##functions to create it try to guarantee that the columns of exprs(e) 
+##match the rows of the sample information table. pData is use as 
+##shorthand for phenotype data. :
+sampleInfo <- pData(e)
+dim(sampleInfo)
+head(sampleInfo)
+
+##A final table is a table that describes the rows, in this case genes.
+##Because each product will have a different table, these have already been
+##created in Bioconductor. Because there are certain products that are
+##widely used, Bioconductor makes databases available from which you can
+##extract this information. This every object does not have to carry around
+##this information:
+source("http://bioconductor.org/biocLite.R")
+biocLite("hgfocus.db")
+library(hgfocus.db)
+annot <- select(hgfocus.db, keys=featureNames(e), keytype="PROBEID", 
+               columns=c("CHR", "CHRLOC", "SYMBOL"))
+##pick one
+annot <-annot[match(featureNames(e),annot$PROBEID),]
+head(annot)
+dim(annot)
+```
+
+##  Question 1.5.7
+
+Note that this is an advanced question and that you can ask questions in the discussion forum.
+
+Create a Monte Carlo Simulation in which you simulate measurements from 8,793 genes for 24 samples: 12 cases and 12 controls. 
+
+```{r}
+g <- factor(sampleInfo$group)
+n <- 24
+m <- 8793
+m0 <- 8293
+m1 <- 500
+delta <- 2
+positives <- 500
+results <- matrix(0, m, 2)
+set.seed(1)
+fp <- replicate(1000, {
+        mat <- matrix(rnorm(n*m),m,n)
+    mat[1:positives,1:(n/2)] <- mat[1:positives,1:(n/2)]+delta
+    library(genefilter)
+    results <- rowttests(geneExpression,g)$p.value
+    badj <- p.adjust(results, method = "bonferroni")
+    return(sum(badj[501:m] < 0.05))
+    }
+    )
+  
+mean(fp)/m0
+
+
+set.seed(1)
+fn <- replicate(1000, {
+    mat <- matrix(rnorm(n*m),m,n)
+    mat[1:positives,1:(n/2)] <- mat[1:positives,1:(n/2)]+delta
+    library(genefilter)
+    results <- rowttests(geneExpression,g)$p.value
+    badj <- p.adjust(results, method = "bonferroni")
+    return(sum(badj[1:500] >= 0.05))
+    }
+    )
+mean(fn)/m1
+   
+
