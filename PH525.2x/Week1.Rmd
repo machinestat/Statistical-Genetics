@@ -1,0 +1,14 @@
+---
+title: "Introduction to Linear Models"
+
+output: pdf_document
+---
+
+## Introduction
+
+We are going to describe three examples from the life sciences. One from physics, one related to genetics, and one from a mouse experiment. They are very different yet we end up using the same statistical technique: fitting linear models. 
+```{r}
+library(rafalib)
+## Loading required package: RColorBrewer
+mypar2()
+```
