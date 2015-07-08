@@ -12,3 +12,40 @@ library(rafalib)
 ## Loading required package: RColorBrewer
 mypar2()
 ```
+
+## Objects falling
+
+Imagine you are Galileo back in the 16th century trying to describe the velocity of an objects falling. An assistant climbs the Tower of Pizza and drops a ball while several others record the position at different times. Let’s simulate some data using the equations we know today and adding some measurement error:
+```{r}
+set.seed(1)
+g <- 9.8 # meters per second
+n <- 25
+tt <- seq(0, 3.4, len = n) # time in seconds, t is a base function
+d <- 56.67 - 0.5*g*tt^2 + rnorm(n, sd = 1)
+
+# The assistants hand the data to Galileo and this is what he sees:
+plot(tt, d, ylab = "Distance in meters",
+     xlab = "Time in seconds")
+```
+
+The model of the data is:
+
+$$ Y_{i} = \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \varepsilon$$ $$i=1,\dots,n$$
+
+With $Y_i$ representing location, $x_i$ representing the time, and $\varepsilon$ accounts for measurement error. This is a linear model becuase it is a linear combination of known quantities (th $x$ s) referred to as predictors or covariates and unknown parameters (the $\beta$ s).
+
+## Father son’s heights
+
+Paired height data from father and sons
+```{r}
+library(UsingR)
+x=father.son$fheight
+y=father.son$sheight
+plot(x, y, xlab = "Father's height", ylab = "Son's height")
+```
+
+The son’s height does seem to increase linearly with father’s height. In this case a model that describes the data is as follows:
+
+$$Y_i = \beta_0 + \beta_1 x_i + \varepsilon,  i = 1, \dots, N $$
+
+This is also a linear model. Here $x_i$ and $Y_i$ the father and son heights respectively for the $i$-th pair and $\varepsilon$ a term to account for the extra variability. Here we think of the father's height as the predictor and being fixed (not random) so we use lower case. Note that measurement error alone can't explain all the variability seen in $\varepsilon$. Note that this makes sense as there are other variables not in the model, for example, mother's height and environmentalism factors.
